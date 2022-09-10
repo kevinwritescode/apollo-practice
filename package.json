@@ -6,7 +6,8 @@
   "type": "module",
   "scripts": {
     "dev": "tsc-watch --noClear -p ./tsconfig.json --onSuccess \"node ./dist/server.js\"",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "gql-gen": "graphql-codegen"
   },
   "repository": {
     "type": "git",
@@ -29,6 +30,11 @@
     "sqlite3": "^5.0.11"
   },
   "devDependencies": {
+    "@graphql-codegen/cli": "^2.12.0",
+    "@graphql-codegen/typescript": "^2.7.3",
+    "@tsconfig/recommended": "^1.0.1",
+    "@types/graphql": "^14.5.0",
+    "graphql-codegen": "^0.4.0",
     "nodemon": "^2.0.19",
     "prettier": "2.7.1",
     "tsc-watch": "^5.0.3",

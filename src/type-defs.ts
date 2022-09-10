@@ -1,10 +1,10 @@
 import { gql } from 'apollo-server-express';
 
-const typeDefs = gql`
+export default gql`
     type Query {
         hello: String!
         me: User!
-        teams: [Team]
+        teams: [Team]!
     }
 
     type User {
@@ -14,13 +14,19 @@ const typeDefs = gql`
         country: String!
         countryCode: String!
         timezone: String!
-        team: Team!
+        team: Team
     }
 
     type Team {
         id: ID!
         name: String!
     }
-`;
 
-export default typeDefs;
+    input TeamInput {
+        name: String!
+    }
+
+    type Mutation {
+        createTeam(input: TeamInput!): Team!
+    }
+`;
