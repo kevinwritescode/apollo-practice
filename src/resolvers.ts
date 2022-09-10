@@ -1,7 +1,6 @@
 import { AuthenticationError, ForbiddenError } from "apollo-server-core";
 import { Team, User } from "../gql-types.js";
 import { hasPermission } from "./auth.js";
-import { teams, users } from "./database.js";
 
 // Resolvers define the technique for fetching the types defined in the
 // schema. This resolver retrieves books from the "books" array above.
@@ -10,23 +9,23 @@ export default {
         hello(): string {
             return 'hello';
         },
-        me(parent, args, context): User {
-            if (!context.user) {
+        async me(parent, args, { user }): Promise<User> {
+            if (!user) {
                 throw new AuthenticationError('Invalid User session');
             }
             
-            return context.user;
+            return user;
         },
-        teams(parent, args, context): Team[] {
-            if (!hasPermission(context.user, 'Team')) {
+        async teams(_, __, { user, dataSources }): Promise<Team[]> {
+            if (!hasPermission(user, 'Team')) {
                 throw new ForbiddenError('User not allowed');
             }
-            return teams;
+            return dataSources.db.getTeams();
         },
     },
     User: {
-        team(parent): Team | undefined {
-            return teams.find(row => row.id === parent.teamId);
+        team(parent, _, { dataSources }): Team | undefined {
+            return dataSources.db.getTeam(parent.teamId);
         }
     }
 };

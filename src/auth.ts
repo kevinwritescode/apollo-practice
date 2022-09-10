@@ -1,8 +1,8 @@
 
-import { UserDb } from "./database.js";
+import { UserDb } from "./models.js";
 
-export function getUser(users: UserDb[], token: string): UserDb | undefined {
-    return users.find(row => row.token === token);
+export async function getUser(db, token: string): Promise<UserDb | undefined> {
+    return db.getUser(token);
 }
 
 export function hasPermission(user: UserDb, context: string): boolean {

@@ -1,43 +1,49 @@
-import { Team, User } from "../gql-types.js";
+import { SQLDataSource } from 'datasource-sql';
+import { Team, User } from '../gql-types.js';
+import { teams, users } from './models.js';
 
-export interface UserDb extends Omit<User, 'team'> {
-    teamId: string,
-    token: string,
-    permission: string[]
-}
+const MINUTE = 60;
 
-export const users: UserDb[] = [
-    {
-        id: '1',
-        name: 'Kevin',
-        city: 'Austin',
-        country: 'United States',
-        countryCode: 'US',
-        timezone: '-5',
-        teamId: '1',
-        token: 'AAA',
-        permission: ['Team'],
-    },
-    {
-        id: '2',
-        name: 'Nancy',
-        city: 'Boston',
-        country: 'United States',
-        countryCode: 'US',
-        timezone: '-4',
-        teamId: '2',
-        token: 'BBB',
-        permission: [],
-    },
-];
+export default class DB extends SQLDataSource {
+    async initialize() {
+        const knex = this.knex;
 
-export const teams: Team[] = [
-    {
-        id: '1',
-        name: 'Mercury',
-    },
-    {
-        id: '2',
-        name: 'Solar'
+        await knex.schema.dropTableIfExists('user');
+
+        await knex.schema.dropTableIfExists('team');
+
+        await knex.schema.createTable('user', function(table) {
+            table.string('id');
+            table.string('name');
+            table.string('city');
+            table.string('country');
+            table.string('countryCode');
+            table.integer('timezone');
+            table.string('teamId');
+            table.string('token');
+            table.string('permission');
+
+            knex.batchInsert('user', users);
+        });
+
+        await knex.schema.createTable('team', function(table) {
+            table.string('id');
+            table.string('name');
+
+            knex.batchInsert('team', teams);
+        });
     }
-]
+
+    async getUser(token: string): Promise<User> {
+        return this.knex('user').where({ token }).first();
+    }
+
+    
+    async getTeams(): Promise<Team[]> {
+        return this.knex('team');
+    }
+
+    async getTeam(id: string): Promise<Team> {
+        return this.knex('team').where({ id }).first();
+    }
+}

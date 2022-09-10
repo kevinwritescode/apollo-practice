@@ -3,28 +3,38 @@ import {
     ApolloServerPluginDrainHttpServer,
     ApolloServerPluginLandingPageLocalDefault,
 } from 'apollo-server-core';
-import { SQLDataSource } from 'datasource-sql';
 import express from 'express';
 import http from 'http';
 import Sqlite3 from 'sqlite3';
 import typeDefs from './type-defs.js';
 import resolvers from './resolvers.js';
-import { users } from './database.js';
 import { getUser } from './auth.js';
+import DB from './database.js';
 
 const sqlite3 = Sqlite3.verbose();
 
 async function startApolloServer(typeDefs, resolvers) {
     const app = express();
     const httpServer = http.createServer(app);
+    const db = new DB({
+        client: 'sqlite3', 
+        connection: {
+            filename: "file:memDb1?mode=memory&cache=shared",
+        },
+        // @ts-ignore
+        userNullAsDefault: true
+    });
+    db.initialize();
+
     const server = new ApolloServer({
         typeDefs,
         resolvers,
         csrfPrevention: true,
         cache: 'bounded',
-        context: ({ req }) => {
+        dataSources: () => ({ db }),
+        context: async ({ req }) => {
             const token = req.headers.authorization ?? '';
-            const user = getUser(users, token);
+            const user = await getUser(db, token);
             return { user };
         },
         plugins: [
