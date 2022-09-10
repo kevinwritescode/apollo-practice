@@ -1,0 +1,23 @@
+{
+  "name": "apollo-practice",
+  "version": "1.0.0",
+  "description": "Apollo Server NodeJS Practice",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/kevinwritescode/apollo-practice.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/kevinwritescode/apollo-practice/issues"
+  },
+  "homepage": "https://github.com/kevinwritescode/apollo-practice#readme",
+  "dependencies": {
+    "apollo-server": "^3.10.2",
+    "graphql": "^16.6.0"
+  }
+}
