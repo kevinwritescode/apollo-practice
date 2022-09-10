@@ -16,7 +16,7 @@ export default {
             
             return user;
         },
-        async teams(_, __, { user, dataSources }): Promise<Team[]> {
+        async teams(parent, args, { user, dataSources }): Promise<Team[]> {
             if (!hasPermission(user, 'Team')) {
                 throw new ForbiddenError('User not allowed');
             }
@@ -24,7 +24,7 @@ export default {
         },
     },
     User: {
-        async team(parent, _, { dataSources }): Promise<Team | undefined> {
+        async team(parent, args, { dataSources }): Promise<Team | undefined> {
             return dataSources.db.getTeam(parent.teamId);
         }
     }
