@@ -28,6 +28,9 @@ async function startApolloServer(typeDefs, resolvers) {
 
     await db.prepare();
 
+    // Simple redirect for CodeSandbox
+    app.get('/', (req, res) => res.redirect('/graphql'));
+
     const server = new ApolloServer({
         typeDefs,
         resolvers,
