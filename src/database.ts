@@ -5,7 +5,8 @@ import { teams, users } from './models.js';
 const MINUTE = 60;
 
 export default class DB extends SQLDataSource {
-    async initialize() {
+    async prepare() {
+        console.log('Initializing DB');
         const knex = this.knex;
 
         await knex.schema.dropTableIfExists('user');
@@ -22,16 +23,16 @@ export default class DB extends SQLDataSource {
             table.string('teamId');
             table.string('token');
             table.string('permission');
-
-            knex.batchInsert('user', users);
         });
+
+        await knex.batchInsert('user', users);
 
         await knex.schema.createTable('team', function(table) {
             table.string('id');
             table.string('name');
-
-            knex.batchInsert('team', teams);
         });
+
+        await knex.batchInsert('team', teams);
     }
 
     async getUser(token: string): Promise<User> {
@@ -44,6 +45,7 @@ export default class DB extends SQLDataSource {
     }
 
     async getTeam(id: string): Promise<Team> {
-        return this.knex('team').where({ id }).first();
+        const out = await this.knex('team').where({ id }).first();
+        return out;
     }
 }

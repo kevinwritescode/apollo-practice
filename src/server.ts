@@ -14,6 +14,9 @@ import DB from './database.js';
 const sqlite3 = Sqlite3.verbose();
 
 async function startApolloServer(typeDefs, resolvers) {
+    console.log('🥳 Starting Server');
+
+    // Initialize Routing + Databases
     const app = express();
     const httpServer = http.createServer(app);
     const db = new DB({
@@ -22,7 +25,8 @@ async function startApolloServer(typeDefs, resolvers) {
         // @ts-ignore
         userNullAsDefault: true
     });
-    db.initialize();
+
+    await db.prepare();
 
     const server = new ApolloServer({
         typeDefs,
@@ -31,8 +35,9 @@ async function startApolloServer(typeDefs, resolvers) {
         cache: 'bounded',
         dataSources: () => ({ db }),
         context: async ({ req }) => {
+            // On every request, authorize user token if provided
             const token = req.headers.authorization ?? '';
-            const user = await getUser(db, token);
+            const user = token ? await getUser(db, token) : undefined;
             return { user };
         },
         plugins: [
@@ -40,10 +45,15 @@ async function startApolloServer(typeDefs, resolvers) {
             ApolloServerPluginLandingPageLocalDefault({ embed: true }),
         ],
     });
+
+    // Start Express + Apollo server and listen
     await server.start();
     server.applyMiddleware({ app });
-    await new Promise<void>(resolve => httpServer.listen({ port: 4000 }, resolve));
+    await new Promise<void>(resolve => {
+        console.log('listening');
+        return httpServer.listen({ port: 4000 }, resolve);
+    });
     console.log(`🚀 Server ready at http://localhost:4000${server.graphqlPath}`);
 }
 
-startApolloServer(typeDefs, resolvers);
+await startApolloServer(typeDefs, resolvers);
