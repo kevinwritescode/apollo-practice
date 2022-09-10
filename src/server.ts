@@ -1,4 +1,4 @@
-import { ApolloServer, gql } from 'apollo-server-express';
+import { ApolloServer } from 'apollo-server-express';
 import {
     ApolloServerPluginDrainHttpServer,
     ApolloServerPluginLandingPageLocalDefault,
@@ -18,9 +18,7 @@ async function startApolloServer(typeDefs, resolvers) {
     const httpServer = http.createServer(app);
     const db = new DB({
         client: 'sqlite3', 
-        connection: {
-            filename: "file:memDb1?mode=memory&cache=shared",
-        },
+        connection: ':memory:',
         // @ts-ignore
         userNullAsDefault: true
     });
