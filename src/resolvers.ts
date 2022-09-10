@@ -24,7 +24,7 @@ export default {
         },
     },
     User: {
-        team(parent, _, { dataSources }): Team | undefined {
+        async team(parent, _, { dataSources }): Promise<Team | undefined> {
             return dataSources.db.getTeam(parent.teamId);
         }
     }
