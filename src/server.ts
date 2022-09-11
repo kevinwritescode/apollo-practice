@@ -1,26 +1,29 @@
-import { ApolloServer } from 'apollo-server-express';
+/**
+ * ✨ Let's build a NodeJS + Express + Apollo Server!
+ */
 import {
     ApolloServerPluginDrainHttpServer,
-    ApolloServerPluginLandingPageLocalDefault,
+    ApolloServerPluginLandingPageLocalDefault
 } from 'apollo-server-core';
+import { ApolloServer } from 'apollo-server-express';
 import express from 'express';
 import http from 'http';
-import Sqlite3 from 'sqlite3';
-import typeDefs from './type-defs.js';
-import resolvers from './resolvers.js';
 import { getUser } from './auth.js';
 import DB from './database.js';
+import schema from './schema.js';
 
-const sqlite3 = Sqlite3.verbose();
-
-async function startApolloServer(typeDefs, resolvers) {
-    console.log('🥳 Starting Server');
+/**
+ * Run at every reload to initialze express and database
+ * @param schema
+ */
+async function startApolloServer(schema) {
+    console.log('🥳 Attmpting to start Server');
 
     // Initialize Routing + Databases
     const app = express();
     const httpServer = http.createServer(app);
     const db = new DB({
-        client: 'sqlite3', 
+        client: 'sqlite3',
         connection: ':memory:',
         // @ts-ignore
         userNullAsDefault: true
@@ -32,12 +35,18 @@ async function startApolloServer(typeDefs, resolvers) {
     app.get('/', (req, res) => res.redirect('/graphql'));
 
     const server = new ApolloServer({
-        typeDefs,
-        resolvers,
+        schema,
         csrfPrevention: true,
         cache: 'bounded',
+        introspection: process.env.NODE_ENV !== 'production',
         dataSources: () => ({ db }),
         context: async ({ req }) => {
+            if (req.body.operationName === 'IntrospectionQuery') {
+                // Avoid updating context on introspection
+                return;
+            }
+
+            console.log('Authorizing', req.body.operationName);
             // On every request, authorize user token if provided
             const token = req.headers.authorization ?? '';
             const user = token ? await getUser(db, token) : undefined;
@@ -56,7 +65,8 @@ async function startApolloServer(typeDefs, resolvers) {
         console.log('listening');
         return httpServer.listen({ port: 4000 }, resolve);
     });
+
     console.log(`🚀 Server ready at http://localhost:4000${server.graphqlPath}`);
 }
 
-await startApolloServer(typeDefs, resolvers);
+await startApolloServer(schema);

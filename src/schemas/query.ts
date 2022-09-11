@@ -1,10 +1,18 @@
 import { AuthenticationError, ForbiddenError } from "apollo-server-core";
-import { Team, User } from "../gql-types.js";
-import { hasPermission } from "./auth.js";
+import { gql } from 'apollo-server-express';
+import { hasPermission } from "../auth.js";
+import { Team, User } from "../_typedefs/gql-types.js";
 
-// Resolvers define the technique for fetching the types defined in the
-// schema. This resolver retrieves books from the "books" array above.
-export default {
+export const typeDef = gql`
+    type Query {
+        hello: String!
+        me: User!
+        teams: [Team]!
+        user: User!
+    }
+`;
+
+export const resolvers = {
     Query: {
         hello(): string {
             return 'hello';
@@ -13,7 +21,7 @@ export default {
             if (!user) {
                 throw new AuthenticationError('Invalid User session');
             }
-            
+
             return user;
         },
         async teams(parent, args, { user, dataSources }): Promise<Team[]> {
@@ -23,9 +31,5 @@ export default {
             return dataSources.db.getTeams();
         },
     },
-    User: {
-        async team(parent, args, { dataSources }): Promise<Team | undefined> {
-            return dataSources.db.getTeam(parent.teamId);
-        }
-    }
-};
+}
+
