@@ -5,6 +5,9 @@ import { CreateUserInput, Scalars, Team } from './_typedefs/gql-types.js';
 
 const MINUTE = 60;
 
+/**
+ * TODO Separate into proper models and don't rebuild basic Knex queries
+ */
 export default class DB extends SQLDataSource {
     getKnex() {
         return this.knex;

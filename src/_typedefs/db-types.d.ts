@@ -13,7 +13,7 @@ export interface Args<T> {
     input: T;
 }
 
-export interface DataSources {
+export interface AppContext extends Context {
     user: UserDb;
     dataSources: {
         db: DB;

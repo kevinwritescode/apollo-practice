@@ -8,6 +8,8 @@ import { resolvers as UserRes, typeDef as User } from './schemas/user.js';
 
 const schema = makeExecutableSchema({
     typeDefs: [Query, User, Team, Mutation, Error],
+    // TODO do a deep merge to support merging shared Query and Mutations
+    // TODO learn more about large GQL schemas and how to manage
     resolvers: { ...QueryRes, ...UserRes, ...MutationRes },
 });
 

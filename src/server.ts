@@ -6,7 +6,7 @@ import { ApolloServer } from 'apollo-server-express';
 import express from 'express';
 import { GraphQLSchema } from 'graphql';
 import http from 'http';
-import { getUserByToken } from './auth.js';
+import { authorize } from './auth.js';
 import DB from './database.js';
 import schema from './schema.js';
 import { prepareDb } from './_typedefs/prepare-db.js';
@@ -40,19 +40,7 @@ async function startApolloServer(schema: GraphQLSchema) {
         cache: 'bounded',
         introspection: process.env.NODE_ENV !== 'production',
         dataSources: () => ({ db }),
-        context: async ({ req }) => {
-            // Avoid updating context on introspection
-            if (req.body.operationName === 'IntrospectionQuery') {
-                return;
-            }
-
-            // On every request, authorize user token if provided
-            const token = req.headers.authorization ?? '';
-            const user = token ? await getUserByToken(db, token) : undefined;
-            console.log(`🗝️ Authorized ${user?.id ?? 'NOONE'} for ${req.body.operationName}`);
-
-            return { user };
-        },
+        context: async ({ req }) => authorize(req, db),
         plugins: [ApolloServerPluginDrainHttpServer({ httpServer }), ApolloServerPluginLandingPageLocalDefault({ embed: true })],
     });
 

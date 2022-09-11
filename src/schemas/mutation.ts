@@ -1,6 +1,6 @@
-import { gql } from 'apollo-server-express';
-import { loginUser, validateOrThrow } from '../auth.js';
-import { Args, DataSources } from '../_typedefs/db-types.js';
+import { AuthenticationError, gql } from 'apollo-server-express';
+import { validateOrThrow } from '../auth.js';
+import { AppContext, Args } from '../_typedefs/db-types.js';
 import { CreateUserInput, CreateUserPayload, LoginUserInput, LoginUserPayload } from '../_typedefs/gql-types.js';
 
 export const typeDef = gql`
@@ -18,13 +18,20 @@ export const resolvers = {
          * TODO Implement a proper Passport / MFA / or email+password login combination
          * TODO consider never returning a token but using HTTP ONLY cookies
          */
-        async login(parent, { input }: Args<LoginUserInput>, { dataSources }): Promise<LoginUserPayload> {
+        async login(parent, { input }: Args<LoginUserInput>, { dataSources }: AppContext): Promise<LoginUserPayload> {
             const { id, hash } = input;
-            const token = await loginUser(dataSources.db, id, hash);
-            return { token };
+            const user = await dataSources.db.getUser(id);
+            if (!hash || !user || user.hash !== hash) {
+                throw new AuthenticationError('Invalid login credentials');
+            }
+            return { token: user.token };
         },
 
-        async createUser(parent, { input }: Args<CreateUserInput>, { user, dataSources }: DataSources): Promise<CreateUserPayload> {
+        /**
+         * Create a new user if logged in
+         * TODO explore advanced permissions for more dangerous mutations
+         */
+        async createUser(parent, { input }: Args<CreateUserInput>, { user, dataSources }: AppContext): Promise<CreateUserPayload> {
             validateOrThrow(user, 'User');
 
             const newUserId = await dataSources.db.createUser(input);
