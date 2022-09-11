@@ -1,6 +1,6 @@
 import { AuthenticationError, ForbiddenError } from 'apollo-server-core';
 import { gql } from 'apollo-server-express';
-import { hasPermission } from '../auth.js';
+import { validateOrThrow } from '../auth.js';
 import { Team, User } from '../_typedefs/gql-types.js';
 
 export const typeDef = gql`
@@ -25,9 +25,8 @@ export const resolvers = {
             return user;
         },
         async teams(parent, args, { user, dataSources }): Promise<Team[]> {
-            if (!hasPermission(user, 'Team')) {
-                throw new ForbiddenError('User not allowed');
-            }
+            validateOrThrow(user, 'Team');
+            
             return dataSources.db.getTeams();
         },
     },

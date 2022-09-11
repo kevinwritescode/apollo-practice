@@ -1,0 +1,6 @@
+{
+    "files.autoSave": "afterDelay",
+    "editor.fontFamily": "'Jetbrains Mono Regular', Consolas, 'Courier New', monospace",
+    "editor.formatOnPaste": true,
+    "editor.formatOnSave": true
+}

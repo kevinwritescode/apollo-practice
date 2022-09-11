@@ -12,6 +12,15 @@ export const typeDef = gql`
         team: Team
     }
 
+    input LoginUserInput {
+        id: ID!
+        hash: String!
+    }
+
+    type LoginUserPayload {
+        token: String!
+    }
+
     input CreateUserInput {
         name: String!
         city: String!

@@ -1,50 +1,29 @@
+import crypto from 'crypto';
 import { SQLDataSource } from 'datasource-sql';
-import { Team, User } from './_typedefs/gql-types.js';
-import { teams, users } from './_typedefs/models.js';
+import { UserDb } from './_typedefs/db-types.js';
+import { CreateUserInput, Scalars, Team } from './_typedefs/gql-types.js';
 
 const MINUTE = 60;
 
 export default class DB extends SQLDataSource {
-    /**
-     * 💀 Never run in production! for local experimentation only!
-     * TODO move out of source and have a local only PREPARE step
-     */
-    async prepare() {
-        if (process.env.NODE_ENV === 'production') {
-            console.log('💀 Avoiding production data replacement');
-            return;
-        }
-
-        console.log('Initializing DB');
-        const knex = this.knex;
-
-        await knex.schema.dropTableIfExists('user');
-
-        await knex.schema.dropTableIfExists('team');
-
-        await knex.schema.createTable('user', function (table) {
-            table.string('id');
-            table.string('name');
-            table.string('city');
-            table.string('country');
-            table.string('countryCode');
-            table.integer('timezone');
-            table.string('teamId');
-            table.string('token');
-            table.string('permission');
-        });
-
-        await knex.batchInsert('user', users);
-
-        await knex.schema.createTable('team', function (table) {
-            table.string('id');
-            table.string('name');
-        });
-
-        await knex.batchInsert('team', teams);
+    getKnex() {
+        return this.knex;
     }
 
-    async getUser(token: string): Promise<User> {
+    async getUsers(): Promise<UserDb[]> {
+        return this.knex('user');
+    }
+
+    async getUser(id: Scalars['ID']): Promise<UserDb> {
+        return this.knex('user').where({ id }).first();
+    }
+
+    async createUser(input: CreateUserInput): Promise<Scalars['ID']> {
+        const res = await this.knex('user').insert({ ...input, id: crypto.randomUUID() }, ['id']);
+        return res?.[0]?.id;
+    }
+
+    async getUserByToken(token: string): Promise<UserDb> {
         return this.knex('user').where({ token }).first();
     }
 
@@ -52,7 +31,7 @@ export default class DB extends SQLDataSource {
         return this.knex('team');
     }
 
-    async getTeam(id: string): Promise<Team> {
+    async getTeam(id: Scalars['ID']): Promise<Team> {
         const out = await this.knex('team').where({ id }).first();
         return out;
     }
