@@ -1,7 +1,7 @@
-import { AuthenticationError, ForbiddenError } from "apollo-server-core";
+import { AuthenticationError, ForbiddenError } from 'apollo-server-core';
 import { gql } from 'apollo-server-express';
-import { hasPermission } from "../auth.js";
-import { Team, User } from "../_typedefs/gql-types.js";
+import { hasPermission } from '../auth.js';
+import { Team, User } from '../_typedefs/gql-types.js';
 
 export const typeDef = gql`
     type Query {
@@ -31,5 +31,4 @@ export const resolvers = {
             return dataSources.db.getTeams();
         },
     },
-}
-
+};

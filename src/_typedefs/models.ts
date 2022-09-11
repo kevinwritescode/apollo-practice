@@ -1,10 +1,10 @@
-import { Team, User } from "../gql-types.js";
+import { Team, User } from './gql-types.js';
 
 // TODO Do not extend User typedef once you establish proper DB types
 export interface UserDb extends Omit<User, 'team'> {
-    teamId: string,
-    token: string,
-    permission: string[]
+    teamId: string;
+    token: string;
+    permission: string[];
 }
 
 export const users: UserDb[] = [
@@ -39,6 +39,6 @@ export const teams: Team[] = [
     },
     {
         id: '2',
-        name: 'Solar'
-    }
-]
+        name: 'Solar',
+    },
+];

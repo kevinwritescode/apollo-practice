@@ -1,16 +1,17 @@
 import { SQLDataSource } from 'datasource-sql';
-import { Team, User } from '../gql-types.js';
-import { teams, users } from './models.js';
+import { Team, User } from './_typedefs/gql-types.js';
+import { teams, users } from './_typedefs/models.js';
 
 const MINUTE = 60;
 
 export default class DB extends SQLDataSource {
     /**
      * 💀 Never run in production! for local experimentation only!
+     * TODO move out of source and have a local only PREPARE step
      */
     async prepare() {
         if (process.env.NODE_ENV === 'production') {
-            console.log('💀 Avoiding production data replacement')
+            console.log('💀 Avoiding production data replacement');
             return;
         }
 
@@ -46,7 +47,6 @@ export default class DB extends SQLDataSource {
     async getUser(token: string): Promise<User> {
         return this.knex('user').where({ token }).first();
     }
-
 
     async getTeams(): Promise<Team[]> {
         return this.knex('team');

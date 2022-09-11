@@ -30,6 +30,6 @@ export const resolvers = {
     User: {
         async team(parent, args, { dataSources }): Promise<Team | undefined> {
             return dataSources.db.getTeam(parent.teamId);
-        }
-    }
-}
+        },
+    },
+};

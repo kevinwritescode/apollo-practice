@@ -9,7 +9,7 @@ export const typeDef = gql`
     input CreateTeamInput {
         name: String!
     }
-        
+
     type CreateTeamPayload {
         team: Team
         error: Error

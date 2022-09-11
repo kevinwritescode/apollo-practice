@@ -3,10 +3,11 @@
  */
 import {
     ApolloServerPluginDrainHttpServer,
-    ApolloServerPluginLandingPageLocalDefault
+    ApolloServerPluginLandingPageLocalDefault,
 } from 'apollo-server-core';
 import { ApolloServer } from 'apollo-server-express';
 import express from 'express';
+import { GraphQLSchema } from 'graphql';
 import http from 'http';
 import { getUser } from './auth.js';
 import DB from './database.js';
@@ -16,7 +17,7 @@ import schema from './schema.js';
  * Run at every reload to initialze express and database
  * @param schema
  */
-async function startApolloServer(schema) {
+async function startApolloServer(schema: GraphQLSchema) {
     console.log('🥳 Attmpting to start Server');
 
     // Initialize Routing + Databases
@@ -26,7 +27,7 @@ async function startApolloServer(schema) {
         client: 'sqlite3',
         connection: ':memory:',
         // @ts-ignore
-        userNullAsDefault: true
+        userNullAsDefault: true,
     });
 
     await db.prepare();
@@ -41,12 +42,12 @@ async function startApolloServer(schema) {
         introspection: process.env.NODE_ENV !== 'production',
         dataSources: () => ({ db }),
         context: async ({ req }) => {
+            // Avoid updating context on introspection
             if (req.body.operationName === 'IntrospectionQuery') {
-                // Avoid updating context on introspection
                 return;
             }
 
-            console.log('Authorizing', req.body.operationName);
+            console.log('🗝️ Authorizing', req.body.operationName);
             // On every request, authorize user token if provided
             const token = req.headers.authorization ?? '';
             const user = token ? await getUser(db, token) : undefined;
@@ -61,12 +62,14 @@ async function startApolloServer(schema) {
     // Start Express + Apollo server and listen
     await server.start();
     server.applyMiddleware({ app });
-    await new Promise<void>(resolve => {
+    await new Promise<void>((resolve) => {
         console.log('listening');
         return httpServer.listen({ port: 4000 }, resolve);
     });
 
-    console.log(`🚀 Server ready at http://localhost:4000${server.graphqlPath}`);
+    console.log(
+        `🚀 Server ready at http://localhost:4000${server.graphqlPath}`,
+    );
 }
 
 await startApolloServer(schema);

@@ -1,17 +1,17 @@
 query Example {
-  hello
-  teams {
-    id
-    name
-  }
-  me {
-    ...userDetails
-  }
+    hello
+    teams {
+        id
+        name
+    }
+    me {
+        ...userDetails
+    }
 }
 
 fragment userDetails on User {
-  name
-  team {
     name
-  }
+    team {
+        name
+    }
 }
