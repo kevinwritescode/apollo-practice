@@ -1,3 +1,5 @@
+import { Context } from 'apollo-server-core';
+import { Response } from 'express';
 import DB from '../database.js';
 import { User } from './gql-types.js';
 
@@ -15,6 +17,7 @@ export interface Args<T> {
 
 export interface AppContext extends Context {
     user: UserDb;
+    res: Response;
     dataSources: {
         db: DB;
     };

@@ -3,6 +3,7 @@
  */
 import { ApolloServerPluginDrainHttpServer, ApolloServerPluginLandingPageLocalDefault } from 'apollo-server-core';
 import { ApolloServer } from 'apollo-server-express';
+import cookieParser from 'cookie-parser';
 import express from 'express';
 import { GraphQLSchema } from 'graphql';
 import http from 'http';
@@ -20,6 +21,8 @@ async function startApolloServer(schema: GraphQLSchema) {
 
     // Initialize Routing + Databases
     const app = express();
+    app.use(cookieParser());
+
     const httpServer = http.createServer(app);
     const db = new DB({
         client: 'sqlite3',
@@ -31,8 +34,11 @@ async function startApolloServer(schema: GraphQLSchema) {
     // TODO 💀 Never call this in production, find a better place to put this
     await prepareDb(db.getKnex());
 
-    // Simple redirect for CodeSandbox
-    app.get('/', (req, res) => res.redirect('/graphql'));
+    // TODO 💀 Extremely insecure but we be sandboxin'
+    const cors = {
+        origin: true,
+        credentials: true,
+    };
 
     const server = new ApolloServer({
         schema,
@@ -40,13 +46,18 @@ async function startApolloServer(schema: GraphQLSchema) {
         cache: 'bounded',
         introspection: process.env.NODE_ENV !== 'production',
         dataSources: () => ({ db }),
-        context: async ({ req }) => authorize(req, db),
+        async context({ req, res }) {
+            return {
+                user: await authorize(req, db),
+                res,
+            };
+        },
         plugins: [ApolloServerPluginDrainHttpServer({ httpServer }), ApolloServerPluginLandingPageLocalDefault({ embed: true })],
     });
 
     // Start Express + Apollo server and listen
     await server.start();
-    server.applyMiddleware({ app });
+    server.applyMiddleware({ app, cors, path: '/graphql' });
     await new Promise<void>((resolve) => {
         console.log('listening');
         return httpServer.listen({ port: 4000 }, resolve);

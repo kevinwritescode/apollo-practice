@@ -1,8 +1,7 @@
-import { AuthenticationError, ForbiddenError } from 'apollo-server-core';
+import { ForbiddenError } from 'apollo-server-core';
 import { Request } from 'express';
 import DB from './database.js';
 import { UserDb } from './_typedefs/db-types.js';
-import { Scalars } from './_typedefs/gql-types.js';
 
 /**
  * Lookup a user based on a simple token authorization
@@ -25,16 +24,16 @@ export function validateOrThrow(user: UserDb, context: string): boolean {
     return true;
 }
 
-export async function authorize(req: Request, db: DB) {
+export async function authorize(req: Request, db: DB): Promise<UserDb | undefined> {
     // Avoid updating context on introspection
     if (req.body.operationName === 'IntrospectionQuery') {
         return;
     }
 
     // On every request, authorize user token if provided
-    const token = req.headers.authorization ?? '';
+    const token = req.cookies?.secureCookie ?? '';
     const user = token ? await getUserByToken(db, token) : undefined;
     console.log(`🗝️ Authorized ${user?.id ?? 'NOONE'} for ${req.body.operationName}`);
 
-    return { user };
+    return user;
 }

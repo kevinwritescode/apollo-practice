@@ -18,12 +18,24 @@ export const resolvers = {
          * TODO Implement a proper Passport / MFA / or email+password login combination
          * TODO consider never returning a token but using HTTP ONLY cookies
          */
-        async login(parent, { input }: Args<LoginUserInput>, { dataSources }: AppContext): Promise<LoginUserPayload> {
+        async login(parent, { input }: Args<LoginUserInput>, { dataSources, res }: AppContext): Promise<LoginUserPayload> {
             const { id, hash } = input;
             const user = await dataSources.db.getUser(id);
             if (!hash || !user || user.hash !== hash) {
                 throw new AuthenticationError('Invalid login credentials');
             }
+
+            // Expire in 24 hours
+            const expires = new Date();
+            expires.setDate(expires.getDate() + 1);
+
+            // Set a CORS HTTP Only Cookie (Secure on production)
+            res.cookie('secureCookie', user.token, {
+                secure: process.env.NODE_ENV !== 'development',
+                httpOnly: true,
+                expires,
+            });
+
             return { token: user.token };
         },
 

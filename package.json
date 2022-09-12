@@ -25,6 +25,7 @@
     "apollo-server": "^3.10.2",
     "apollo-server-core": "^3.10.2",
     "apollo-server-express": "^3.10.2",
+    "cookie-parser": "^1.4.6",
     "datasource-sql": "^2.0.1",
     "express": "^4.18.1",
     "graphql": "^16.6.0",
