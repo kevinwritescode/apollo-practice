@@ -31,7 +31,7 @@ export async function authorize(req: Request, db: DB): Promise<UserDb | undefine
     }
 
     // On every request, authorize user token if provided
-    const token = req.cookies?.secureCookie ?? '';
+    const token = req.cookies?.secureCookie ?? req.headers?.authorization ?? '';
     const user = token ? await getUserByToken(db, token) : undefined;
     console.log(`🗝️ Authorized ${user?.id ?? 'NOONE'} for ${req.body.operationName}`);
 
