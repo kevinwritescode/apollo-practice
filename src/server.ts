@@ -42,7 +42,7 @@ async function startApolloServer(schema: GraphQLSchema) {
     // For development, allow all origins
     // TODO If this went into production, create an approval list of origins
     const cors = {
-        origin: process.env.NODE_ENV !== 'production',
+        origin: true,
         credentials: true,
     };
 
@@ -63,7 +63,7 @@ async function startApolloServer(schema: GraphQLSchema) {
 
     // Start Express + Apollo server and listen
     await server.start();
-    server.applyMiddleware({ app, cors });
+    server.applyMiddleware({ app, cors, path: '/graphql' });
     await new Promise<void>((resolve) => {
         console.log('listening');
         return httpServer.listen({ port: 4000 }, resolve);
