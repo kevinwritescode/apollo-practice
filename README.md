@@ -1,6 +1,6 @@
 # 🚀 Apollo Practice
 
-Apollo Server NodeJS Practice, experimenting with Node TS, type generated GQL, and basic auth concepts.
+Apollo Server NodeJS Practice, experimenting with Node TS, type generated GQL, and basic auth concepts. The following are my personal preferences but when working with any team, it is more important to agree on conventions and stick to them, whatever they end up being.
 
 Goals 🥅 of this exercise:
 
