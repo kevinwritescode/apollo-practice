@@ -50,6 +50,8 @@ Just a few notes I gathered while reviewing
 
 # 🔀 Pre Merge Best Practices
 
+- Clear branch naming convention with ticket in name `feature/KN/MERC-123-example-app`
+- A consistent merge strategy (I prefer Squash) and conventional commits `feat(contracts)!: breaking update`
 - Github Actions (or Jenkin) protections on merge to main
 - Unit, Integration, and E2E tests to confirm safety of work
 - Require 1 to several PR reviews, reset requirement on changes
