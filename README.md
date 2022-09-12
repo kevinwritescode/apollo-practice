@@ -16,6 +16,7 @@ Next things to implement:
 1. GQL unions and inline fragments `... on Droid {}`
 2. directives `(@include(if) @skip(if))`
 3. Passport authentication layer
+4. Dataloader and Root Resolvers (to avoid unnecessary DB queries)
 
 # 📐 Folder Format
 ```
@@ -73,6 +74,8 @@ Just a few notes I gathered while reviewing
 
 # 👩‍🏫 Learnings
 
+The following are articles researched during process, or items to dive more into
+
 - [Generate Types](https://dev.to/xcanchal/automatically-generate-typescript-types-for-your-graphql-api-1fah)
 - [Missed GraphQL Concepts Explained](https://medium.com/naresh-bhatia/graphql-concepts-i-wish-someone-explained-to-me-a-year-ago-514d5b3c0eab)
 - [Federated Best Practices](https://www.apollographql.com/docs/enterprise-guide/federated-schema-design/)
@@ -81,3 +84,5 @@ Just a few notes I gathered while reviewing
 - [Disable Introspection](https://www.apollographql.com/blog/graphql/security/why-you-should-disable-graphql-introspection-in-production/)
 - [Blue Green EKS Deploy](https://medium.com/@jerome.decoster/kubernetes-eks-blue-green-deployment-99d611c596ad)
 - [Deploying Kubernetes Node](https://learnk8s.io/deploying-nodejs-kubernetes)
+- [Dataloader](https://github.com/graphql/dataloader)
+- [Root Resolver](https://blog.smartive.ch/advanced-graphql-patterns-the-almighty-root-resolver-f284872397cb)
