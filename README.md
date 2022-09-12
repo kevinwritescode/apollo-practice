@@ -23,7 +23,7 @@ Next things to implement:
 └─ node_modules/             🙈 (Ignore) Package.json modules
 └─ src/
 │  └─ _typedefs/             📖 Definitions and mocked data
-│  │  │  models.js           🙈 (Ignore) Loads dummy data into SQLite
+│  │  │  prepare-db.js       🙈 (Ignore) Loads dummy data into SQLite
 │  │             
 │  └─ schemas/               📝 GQL Typedefs and Resolvers
 │  │  │  error.js            💀 GQL Errors
