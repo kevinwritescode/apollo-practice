@@ -5,7 +5,7 @@ import { UserDb } from './_typedefs/db-types.js';
 
 /**
  * Lookup a user based on a simple token authorization
- * TODO implement a real authentication layer
+ * TODO implement a real authentication layer maybe using Passport
  */
 export async function getUserByToken(db: DB, token: string): Promise<UserDb | undefined> {
     return db.getUserByToken(token);

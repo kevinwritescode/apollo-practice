@@ -13,7 +13,7 @@ import schema from './schema.js';
 import { prepareDb } from './_typedefs/prepare-db.js';
 
 /**
- * Run at every reload to initialze express and database
+ * 🏃‍♀️ Run at every reload to initialze express and database
  * @param schema
  */
 async function startApolloServer(schema: GraphQLSchema) {
@@ -33,15 +33,16 @@ async function startApolloServer(schema: GraphQLSchema) {
         client: 'sqlite3',
         connection: ':memory:',
         // @ts-ignore
-        userNullAsDefault: true,
+        userNullAsDefault: true, // TODO I never got this warning to fix, explore sqlite3 lib
     });
 
-    // TODO 💀 Never call this in production, find a better place to put this
+    // TODO 💀 Never call this data mocking in production
     await prepareDb(db.getKnex());
 
-    // TODO 💀 Extremely insecure but we be sandboxin'
+    // For development, allow all origins
+    // TODO If this went into production, create an approval list of origins
     const cors = {
-        origin: true,
+        origin: process.env.NODE_ENV !== 'production',
         credentials: true,
     };
 
@@ -54,7 +55,7 @@ async function startApolloServer(schema: GraphQLSchema) {
         async context({ req, res }) {
             return {
                 user: await authorize(req, db),
-                res,
+                res, // Needed to setup HTTP Only cookie during login() mutation
             };
         },
         plugins: [ApolloServerPluginDrainHttpServer({ httpServer }), ApolloServerPluginLandingPageLocalDefault({ embed: true })],
@@ -62,7 +63,7 @@ async function startApolloServer(schema: GraphQLSchema) {
 
     // Start Express + Apollo server and listen
     await server.start();
-    server.applyMiddleware({ app, cors, path: '/graphql' });
+    server.applyMiddleware({ app, cors });
     await new Promise<void>((resolve) => {
         console.log('listening');
         return httpServer.listen({ port: 4000 }, resolve);
