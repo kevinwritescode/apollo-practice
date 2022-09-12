@@ -74,11 +74,16 @@ export type MutationLoginArgs = {
   input: LoginUserInput;
 };
 
+/** Primary query for all requests */
 export type Query = {
   __typename?: 'Query';
+  /** Public access test call */
   hello: Scalars['String'];
+  /** Once authenticated, return User details */
   me: User;
+  /** Once authenticated, return list of teams */
   teams: Array<Maybe<Team>>;
+  /** Once authenticated, look up another user */
   user: User;
 };
 
