@@ -61,3 +61,5 @@ Just a few notes I gathered while reviewing
 -   [Designing Mutations](https://www.apollographql.com/blog/graphql/basics/designing-graphql-mutations/)
 -   [Data Sources](https://www.apollographql.com/docs/apollo-server/data/data-sources/)
 -   [Disable Introspection](https://www.apollographql.com/blog/graphql/security/why-you-should-disable-graphql-introspection-in-production/)
+
+Matthew Gordon, Wendy Peralta 
