@@ -5,6 +5,7 @@ import { CreateUserInput, CreateUserPayload, LoginUserInput, LoginUserPayload } 
 
 export const typeDef = gql`
     type Mutation {
+        "Authenticate self with ID and Hash (Not a real world auth example!)"
         login(input: LoginUserInput!): LoginUserPayload!
         createUser(input: CreateUserInput!): CreateUserPayload!
         createTeam(input: CreateTeamInput!): CreateTeamPayload!

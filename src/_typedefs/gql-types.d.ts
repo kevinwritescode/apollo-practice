@@ -56,6 +56,7 @@ export type Mutation = {
   __typename?: 'Mutation';
   createTeam: CreateTeamPayload;
   createUser: CreateUserPayload;
+  /** Authenticate self with ID and Hash (Not a real world auth example!) */
   login: LoginUserPayload;
 };
 
@@ -87,9 +88,11 @@ export type Query = {
   user: User;
 };
 
+/** Friendships last forever */
 export type Team = {
   __typename?: 'Team';
   id: Scalars['ID'];
+  /** Full name with no current restrictions */
   name: Scalars['String'];
 };
 
@@ -97,9 +100,11 @@ export type User = {
   __typename?: 'User';
   city: Scalars['String'];
   country: Scalars['String'];
+  /** ISO 3166-1 Alpha-2 code format like US */
   countryCode: Scalars['String'];
   id: Scalars['ID'];
   name: Scalars['String'];
   team?: Maybe<Team>;
+  /** Integer offset from UTC like -5 for Central */
   timezone: Scalars['Int'];
 };

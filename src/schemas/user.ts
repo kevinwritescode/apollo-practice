@@ -7,7 +7,9 @@ export const typeDef = gql`
         name: String!
         city: String!
         country: String!
+        "ISO 3166-1 Alpha-2 code format like US"
         countryCode: String!
+        "Integer offset from UTC like -5 for Central"
         timezone: Int!
         team: Team
     }
