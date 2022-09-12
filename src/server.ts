@@ -21,7 +21,12 @@ async function startApolloServer(schema: GraphQLSchema) {
 
     // Initialize Routing + Databases
     const app = express();
+
+    // Support CORS HTTP ONLY cookies for sessions
     app.use(cookieParser());
+
+    // Simple redirect for CodeSandbox
+    app.get('/', (req, res) => res.redirect('/graphql'));
 
     const httpServer = http.createServer(app);
     const db = new DB({
