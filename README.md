@@ -15,6 +15,17 @@ Next things to implement:
 
 1. GQL unions and inline fragments `... on Droid {}`
 2. directives `(@include(if) @skip(if))`
+
+```graphql
+query ($skipTitle: Boolean!) {
+  queryPost {
+    id
+    title @skip(if: $skipTitle)
+    text
+  }
+}
+```
+
 3. Passport authentication layer
 4. Dataloader and Root Resolvers (to avoid unnecessary DB queries)
 
@@ -86,3 +97,29 @@ The following are articles researched during process, or items to dive more into
 - [Deploying Kubernetes Node](https://learnk8s.io/deploying-nodejs-kubernetes)
 - [Dataloader](https://github.com/graphql/dataloader)
 - [Root Resolver](https://blog.smartive.ch/advanced-graphql-patterns-the-almighty-root-resolver-f284872397cb)
+
+# 🏗️ Installation
+
+* Install either `node` or `nvm` to manage your version of Node
+* TODO 🎗️: Wrap in a docker image
+
+## Quickstart
+
+The following will sync your Node version, initialize the repo, and start a tsc-watch server
+
+```sh
+nvm i
+npm i
+npm run dev
+```
+
+After that, your local sandbox should be available at `http://localhost:4000/graphql`
+
+## Regenerate Typedefs
+
+The following assumes you have installed with npm, this will update GQL typedef changes
+* TODO 🎗️: Automate into `dev` and `build` process
+
+```sh
+npm run gql-gen
+```
