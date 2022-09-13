@@ -14,6 +14,7 @@ export async function getUserByToken(db: DB, token: string): Promise<UserDb | un
 /**
  * Performs a basic check based on route context and whether user has rights
  * TODO implement a proper role/permission system
+ * TODO flip authorization to always require private permissions unless overridden to be public
  */
 export function validateOrThrow(user: UserDb, context: string): boolean {
     // If user session doesn't exist, this will throw too
@@ -31,6 +32,7 @@ export async function authorize(req: Request, db: DB): Promise<UserDb | undefine
     }
 
     // On every request, authorize user token if provided
+    // TODO remove req.headers.authorization support if not using CodeSandbox (CORS prevented secureCookie)
     const token = req.cookies?.secureCookie ?? req.headers?.authorization ?? '';
     const user = token ? await getUserByToken(db, token) : undefined;
     console.log(`🗝️ Authorized ${user?.id ?? 'NOONE'} for ${req.body.operationName}`);

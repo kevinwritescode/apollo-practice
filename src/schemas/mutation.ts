@@ -43,6 +43,7 @@ export const resolvers = {
         /**
          * Create a new user if logged in
          * TODO explore advanced permissions for more dangerous mutations
+         * TODO use deep merge to let createUser live in user.ts mutations
          */
         async createUser(parent, { input }: Args<CreateUserInput>, { user, dataSources }: AppContext): Promise<CreateUserPayload> {
             validateOrThrow(user, 'User');
