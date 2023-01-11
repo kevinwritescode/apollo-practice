@@ -29,7 +29,7 @@
     "datasource-sql": "^2.0.1",
     "express": "^4.18.1",
     "graphql": "^16.6.0",
-    "knex": "^2.3.0",
+    "knex": "^2.4.0",
     "sqlite3": "^5.0.11"
   },
   "devDependencies": {
